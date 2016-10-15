@@ -1,0 +1,33 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="RunUnitTests">
+
+  <ItemGroup>
+    <BuildArtifactsDir Include="BuildArtifacts\" />
+    <SolutionFile Include="TrabalhoGcs.sln" />
+    <VSTestConsole Include="C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" />
+    <UnitTestsDLL Include="BuildArtifacts\UtilitarioUnitTest.dll" />
+    <RunSettings Include="local.runsettings.xml" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <BuildPlatform Condition=" '$(BuildPlatform)' == '' ">Any CPU</BuildPlatform>
+  </PropertyGroup>
+
+  <Target Name="RunUnitTests" DependsOnTargets="Compile">
+    <Exec Command='"@(VSTestConsole)" @(UnitTestsDLL) /Settings:@(RunSettings) /Logger:trx' />
+  </Target>  
+  
+  <Target Name="Compile" DependsOnTargets="Init">
+    <MSBuild Projects="@(SolutionFile)" Targets="Rebuild"
+             Properties="OutDir=%(BuildArtifactsDir.FullPath);Configuration=$(Configuration);Platform=$(BuildPlatform)" />
+  </Target>
+  
+  <Target Name="Init" DependsOnTargets="Clean">
+    <MakeDir Directories="@(BuildArtifactsDir)" />
+  </Target>
+  
+  <Target Name="Clean">
+    <RemoveDir Directories="@(BuildArtifactsDir)" />
+  </Target>
+  
+</Project>
